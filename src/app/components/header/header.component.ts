@@ -46,12 +46,12 @@ export class HeaderComponent implements OnInit {
       this.isDarkMode = element.classList.toggle('my-app-dark');
 
 
-      const logoImg = document.getElementById('logo-svg');
+      const logoImg = document.getElementById('logo-png');
       if (logoImg instanceof HTMLImageElement) {
         if (this.isDarkMode) {
-          logoImg.src = '/assets/logo_full_1to1_inverted.png';
+          logoImg.src = '/assets/logoToolifyDark.png';
         } else {
-          logoImg.src = '/assets/logo_full_1to1.svg';
+          logoImg.src = '/assets/logoToolifyLight.png';
         }
       }
 
@@ -66,12 +66,12 @@ export class HeaderComponent implements OnInit {
 
 
   applyLogoInvert() {
-    const logoImg = document.getElementById('logo-svg');
+    const logoImg = document.getElementById('logo-png');
     if (logoImg instanceof HTMLImageElement) {
       if (document.body.classList.contains('my-app-dark')) {
-        logoImg.src = '/assets/logo_full_1to1.svg';
+        logoImg.src = '/assets/logoToolifyLight.png';
       } else {
-        logoImg.src = '/assets/logo_full_1to1_inverted.png';
+        logoImg.src = '/assets/logoToolifyDark.png';
       }
     }
   }
