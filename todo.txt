@@ -1,0 +1,26 @@
+content
+- 9 pages
+    - Currency Converter (live)
+        - rate, amount
+    - Unit conversion
+        - metric, imperial, ieee
+    - calculator
+        - bin, hex, oct, dez
+
+    - password gen
+    - qr generator
+        - icon, style, bar/qr/corner
+    - favicon generator
+        - 
+
+    - file converter
+        - png/jpeg
+    - file compression
+    - zip & unzip (tar.gz)
+
+- link 6 to bankend via REST
+
+features
+- multipart as file transfer
+
+
