@@ -31,7 +31,7 @@ app.get('/currency', async (req: Request, res: Response) => {
         res.sendStatus(500);
         return;
     }
-    res.status(200).send(converted);
+    res.status(200).send(converted.toString());
 });
 
 app.get('/qrcode', async (req: Request, res: Response) => {
