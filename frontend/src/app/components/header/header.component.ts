@@ -25,14 +25,67 @@ export class HeaderComponent implements OnInit {
         route: '/'
       },
       {
-        label: 'YouTube',
-        icon: PrimeIcons.VIDEO,
-        route: '/youtube'
+        label: 'Calculator',
+        icon: PrimeIcons.CALCULATOR,
+        items: [
+          {
+            label: 'Currency Converter',
+            icon: PrimeIcons.DOLLAR,
+            route: '/currency'
+          },
+          {
+            label: 'Unit Conversion',
+            icon: PrimeIcons.SORT_ALT,
+            route: '/unit'
+          },
+          {
+            label: 'Scientific',
+            icon: PrimeIcons.MICROCHIP,
+            route: '/calculator'
+          },
+        ]
       },
       {
-        label: 'Accounting',
-        icon: PrimeIcons.WALLET,
-        route: '/accounting'
+        label: 'Generators',
+        icon: PrimeIcons.SPARKLES,
+        items: [
+          {
+            label: 'Password',
+            icon: PrimeIcons.KEY,
+            route: '/password'
+          },
+          {
+            label: 'QR Code',
+            icon: PrimeIcons.QRCODE,
+            route: '/qrcode'
+          },
+          {
+            label: 'Favicon',
+            icon: PrimeIcons.IMAGES,
+            route: '/favicon'
+          },
+        ]
+      },
+      {
+        label: 'Converter',
+        icon: PrimeIcons.ARROW_RIGHT_ARROW_LEFT,
+        items: [
+          {
+            label: 'File Converter',
+            icon: PrimeIcons.FILE_PLUS,
+            route: '/file'
+          },
+          {
+            label: 'Compression',
+            icon: PrimeIcons.PERCENTAGE,
+            route: '/compress'
+          },
+          {
+            label: 'Zip & Unzip',
+            icon: PrimeIcons.BOX,
+            route: '/package'
+          },
+        ]
       },
     ];
 
