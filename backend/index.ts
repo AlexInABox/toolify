@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { Convert } from "easy-currencies";
+import QRCode from "qrcode";
 
 const app = express();
 
@@ -34,8 +35,31 @@ app.get('/currency', async (req: Request, res: Response) => {
     res.status(200).send(converted.toString());
 });
 
+interface QRCodeRequest {
+    string: string
+}
+
+function isQRCodeRequest(arg: any): arg is QRCodeRequest {
+    return (
+        arg &&
+        typeof arg.string === 'string'
+    );
+}
+
 app.get('/qrcode', async (req: Request, res: Response) => {
-    res.sendStatus(501);
+    if (!isQRCodeRequest(req.query)) {
+        res.status(400).send("The query you sent does NOT match the expected query. Please try again!");
+        return;
+    }
+    QRCode.toDataURL(req.query.string)
+        .then(url => {
+            res.status(200).send(url.toString());
+            return;
+        })
+        .catch(err => {
+            res.status(500).send(err);
+            return;
+        })
 });
 
 app.get('/favicon', async (req: Request, res: Response) => {
