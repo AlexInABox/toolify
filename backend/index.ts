@@ -5,6 +5,10 @@ import multer from "multer";
 import sharp from "sharp";
 import archiver from 'archiver';
 import fs from "fs";
+import AdmZip from 'adm-zip';
+import { createCanvas, loadImage } from 'canvas';
+import GIFEncoder from 'gifencoder';
+import { fileTypeFromBuffer } from "file-type";
 import Logging from "./lib/Logging.js";
 
 const app = express();
@@ -143,8 +147,64 @@ app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
     }
 });
 
-app.post('/convert', async (req: Request, res: Response) => {
-    res.sendStatus(501);
+const gifUploads = upload.single('gif');
+app.post('/gif', gifUploads, async (req: Request, res: Response) => {
+    if (!req.file) {
+        return res.status(400).send('No file uploaded');
+    }
+    if (req.file.mimetype != 'application/zip') {
+        return res.status(400).send('No valid ZIP file uploaded!');
+    }
+
+    const zip = new AdmZip(req.file.path);
+    var zipEntries = zip.getEntries();
+    const images: Buffer[] = [];
+    const allowedImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'];
+
+    await Promise.all(zipEntries.map(async (zipEntry) => {
+        const buffer = zipEntry.getData();
+        const type = await fileTypeFromBuffer(buffer);
+
+        if (type && allowedImageTypes.includes(type.ext)) {
+            images.push(buffer);
+        }
+    }));
+
+    if (images.length === 0) {
+        return res.status(400).send('No PNG images found in ZIP!');
+    }
+
+    const firstImage = await loadImage(images[0]);
+    const { width, height } = firstImage;
+    const encoder = new GIFEncoder(width, height);
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    res.setHeader('Content-Type', 'image/gif');
+    res.setHeader('Content-Disposition', 'attachment; filename="output.gif"');
+
+    // Pipe the GIF directly to the response
+    encoder.createWriteStream().pipe(res);
+
+    const delay = req.query.delay ? parseInt(req.query.delay as string) : 200;
+    encoder.start();
+    encoder.setRepeat(0);
+    encoder.setDelay(delay);
+    encoder.setQuality(0);
+
+    // Add each image buffer to the GIF
+    for (const imageBuffer of images) {
+        const img = await loadImage(imageBuffer);
+        ctx.drawImage(img, 0, 0, width, height);
+        encoder.addFrame(ctx);
+    }
+
+    encoder.finish();
+
+    // Clean up the uploaded file
+    res.on('finish', () => {
+        fs.unlinkSync(req.file.path);
+    });
 });
 
 app.post('/compress', async (req: Request, res: Response) => {
