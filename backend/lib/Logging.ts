@@ -1,19 +1,19 @@
 import chalk from "chalk";
 
 // Logging helper functions
-async function logError(message) {
+async function logError(message: string) {
     console.log(chalk.red(`[ERROR] ${message}`));
 }
 
-async function logCritical(message) {
+async function logCritical(message: string) {
     console.log(chalk.bgRed.white.bold(`[CRITICAL] ${message}`));
 }
 
-async function logWarning(message) {
+async function logWarning(message: string) {
     console.log(chalk.yellow(`[WARNING] ${message}`));
 }
 
-async function logInfo(message) {
+async function logInfo(message: string) {
     console.log(chalk.white(`[INFO] ${message}`));
 }
 
