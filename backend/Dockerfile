@@ -8,8 +8,13 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libgif-dev \
     librsvg2-dev \
+    python3 \
+    python3-pip \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# Install node-gyp globally
+RUN npm install -g node-gyp
 
 WORKDIR /app
 
