@@ -1,23 +1,6 @@
 # Stage 1: Build
 FROM node:18-alpine3.18 AS builder
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y \
-    libcairo2-dev \
-    libpango1.0-dev \
-    libjpeg-dev \
-    libgif-dev \
-    librsvg2-dev \
-    python3 \
-    python3-pip \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
-
-# Install node-gyp globally
-RUN npm install -g node-gyp
-
 WORKDIR /app
 
 # Copy package files and install dependencies (including devDependencies for TypeScript)
