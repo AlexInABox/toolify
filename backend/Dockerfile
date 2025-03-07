@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:20-slim AS builder
+FROM node:18-alpine3.18 AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -31,7 +31,7 @@ COPY . .
 RUN npx tsc
 
 # Stage 2: Production Image
-FROM node:20-alpine
+FROM node:18-alpine3.18
 
 WORKDIR /app
 
