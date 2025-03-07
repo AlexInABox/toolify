@@ -89,7 +89,7 @@ app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
                 archive.append(data, { name: `favicon.ico` });
             })
             .catch(err => {
-                Logging.logError("[FAVICON] Couldnt generate favicon.ico: " + err);
+                Logging.logError("[FAVICON] Couldnt generate favicon.ico: " + err.toString());
             });
 
         await sharp(req.file.path)
@@ -100,7 +100,7 @@ app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
                 archive.append(data, { name: `favicon-48x48.png` });
             })
             .catch(err => {
-                Logging.logError("[FAVICON] Couldn't generate favicon-48x48.png: " + err);
+                Logging.logError("[FAVICON] Couldn't generate favicon-48x48.png: " + err.toString());
             });
 
         await sharp(req.file.path)
@@ -111,7 +111,7 @@ app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
                 archive.append(data, { name: `apple-touch-icon.png` });
             })
             .catch(err => {
-                Logging.logError("[FAVICON] Couldn't generate apple-touch-icon.png: " + err);
+                Logging.logError("[FAVICON] Couldn't generate apple-touch-icon.png: " + err.toString());
             });
 
         await sharp(req.file.path)
@@ -122,7 +122,7 @@ app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
                 archive.append(data, { name: `site.webmanifest` });
             })
             .catch(err => {
-                Logging.logError("[FAVICON] Couldn't generate site.webmanifest: " + err);
+                Logging.logError("[FAVICON] Couldn't generate site.webmanifest: " + err.toString());
             });
 
         await sharp(req.file.path)
@@ -133,13 +133,13 @@ app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
                 archive.append(data, { name: `favicon-512x512.png` });
             })
             .catch(err => {
-                Logging.logError("[FAVICON] Couldn't generate favicon-512x512.png: " + err);
+                Logging.logError("[FAVICON] Couldn't generate favicon-512x512.png: " + err.toString());
             });
 
         await archive.finalize();
         fs.unlink(req.file.path, () => { }); // Cleanup uploaded file
     } catch (err) {
-        Logging.logCritical("[FAVICON] Failed miserably trying to generate the favicons: " + err);
+        Logging.logCritical("[FAVICON] Failed miserably trying to generate the favicons: " + err.toString());
     }
 });
 
