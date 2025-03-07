@@ -1,8 +1,14 @@
 import express, { Request, Response } from "express";
 import { Convert } from "easy-currencies";
 import QRCode from "qrcode";
+import multer from "multer";
+import sharp from "sharp";
+import archiver from 'archiver';
+import fs from "fs";
+import Logging from "./lib/Logging.js";
 
 const app = express();
+var upload = multer({ dest: 'uploads/' });
 
 
 interface CurrencyRequest {
@@ -62,23 +68,94 @@ app.get('/qrcode', async (req: Request, res: Response) => {
         })
 });
 
-app.get('/favicon', async (req: Request, res: Response) => {
+const faviconUploads = upload.single('favicon');
+app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
+    if (!req.file) {
+        return res.status(400).send('No file uploaded');
+    }
+    const archive = archiver('zip');
+
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename="favicons.zip"');
+
+    try {
+        archive.pipe(res);
+
+        await sharp(req.file.path)
+            .resize(32, 32)
+            .toFormat("png")
+            .toBuffer()
+            .then(data => {
+                archive.append(data, { name: `favicon.ico` });
+            })
+            .catch(err => {
+                Logging.logError("[FAVICON] Couldnt generate favicon.ico: " + err);
+            });
+
+        await sharp(req.file.path)
+            .resize(48, 48)
+            .toFormat("png")
+            .toBuffer()
+            .then(data => {
+                archive.append(data, { name: `favicon-48x48.png` });
+            })
+            .catch(err => {
+                Logging.logError("[FAVICON] Couldn't generate favicon-48x48.png: " + err);
+            });
+
+        await sharp(req.file.path)
+            .resize(180, 180)
+            .toFormat("png")
+            .toBuffer()
+            .then(data => {
+                archive.append(data, { name: `apple-touch-icon.png` });
+            })
+            .catch(err => {
+                Logging.logError("[FAVICON] Couldn't generate apple-touch-icon.png: " + err);
+            });
+
+        await sharp(req.file.path)
+            .resize(192, 192)
+            .toFormat("png")
+            .toBuffer()
+            .then(data => {
+                archive.append(data, { name: `site.webmanifest` });
+            })
+            .catch(err => {
+                Logging.logError("[FAVICON] Couldn't generate site.webmanifest: " + err);
+            });
+
+        await sharp(req.file.path)
+            .resize(512, 512)
+            .toFormat("png")
+            .toBuffer()
+            .then(data => {
+                archive.append(data, { name: `favicon-512x512.png` });
+            })
+            .catch(err => {
+                Logging.logError("[FAVICON] Couldn't generate favicon-512x512.png: " + err);
+            });
+
+        await archive.finalize();
+        fs.unlink(req.file.path, () => { }); // Cleanup uploaded file
+    } catch (err) {
+        Logging.logCritical("[FAVICON] Failed miserably trying to generate the favicons: " + err);
+    }
+});
+
+app.post('/convert', async (req: Request, res: Response) => {
     res.sendStatus(501);
 });
 
-app.get('/convert', async (req: Request, res: Response) => {
+app.post('/compress', async (req: Request, res: Response) => {
     res.sendStatus(501);
 });
 
-app.get('/compress', async (req: Request, res: Response) => {
+app.post('/zip', async (req: Request, res: Response) => {
     res.sendStatus(501);
 });
 
-app.get('/zip', async (req: Request, res: Response) => {
-    res.sendStatus(501);
-});
-
-app.get('/unzip', async (req: Request, res: Response) => {
+app.post('/unzip', async (req: Request, res: Response) => {
     res.sendStatus(501);
 });
 

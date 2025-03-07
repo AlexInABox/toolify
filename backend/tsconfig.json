@@ -1,12 +1,10 @@
 {
-    "compilerOptions": {
-        "module": "esnext",
-        "target": "ESNext",
-        "moduleResolution": "node10",
-        "allowSyntheticDefaultImports": true,
-        "outDir": "./dist"
-    },
-    "files": [
-        "./index.ts"
-    ],
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "ESNext",
+    "moduleResolution": "node10",
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist"
+  },
+  "files": ["./index.ts", "lib/Logging.ts"]
 }
