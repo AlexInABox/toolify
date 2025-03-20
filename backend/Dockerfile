@@ -1,7 +1,7 @@
 # Stage 1: Build
-FROM node:18-alpine3.18 AS builder
+FROM node:18-bullseye AS builder
 
-RUN apk add python3 && ln -s /usr/bin/python3 /usr/bin/python
+RUN apt update && apt install -y python3 build-essential
 
 WORKDIR /app
 
