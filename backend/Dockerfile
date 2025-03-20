@@ -1,7 +1,7 @@
 # Stage 1: Build
 FROM node:18-alpine3.18 AS builder
 
-RUN apk update && apk add python3
+RUN apk add python3 && ln -s /usr/bin/python3 /usr/bin/python
 
 WORKDIR /app
 
