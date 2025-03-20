@@ -1,26 +1,24 @@
 # Stage 1: Build
-FROM node:18-bullseye AS builder
+FROM node:18-alpine AS builder
 
-RUN apt update && apt install python3 build-essential -y
-RUN apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev -y
+# Install dependencies for canvas
+RUN apk add --no-cache python3 build-base cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev
 
 WORKDIR /app
 
-# Copy package files and install dependencies (including devDependencies for TypeScript)
+# Copy package files and install dependencies
 COPY package.json package-lock.json ./
 RUN npm install --only=development
 
-# Copy the rest of the source code
+# Copy source code and compile TypeScript
 COPY . .
-
-# Compile TypeScript
 RUN npx tsc
 
 # Stage 2: Production Image
-FROM node:18-bullseye
+FROM node:18-alpine
 
-RUN apt update && apt install -y python3 build-essential
-RUN apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev -y
+# Install only runtime dependencies for canvas
+RUN apk add --no-cache cairo pango jpeg giflib librsvg
 
 WORKDIR /app
 
