@@ -7,6 +7,16 @@ const options = {
             title: "API Documentation",
             version: "1.0.0",
         },
+        servers: [
+            {
+                url: "https://bcnd.toolify.m1productions.de", // For production
+                description: "Production server"
+            },
+            {
+                url: "http://localhost:3000", // For development
+                description: "Development server"
+            },
+        ]
     },
     apis: ["dist/lib/swaggerDocs.js"], // Adjust path if needed
 };
