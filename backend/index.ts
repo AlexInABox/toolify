@@ -225,6 +225,10 @@ app.post('/unzip', async (req: Request, res: Response) => {
     res.sendStatus(501);
 });
 
+app.get('/api-docs.json', (req, res) => {
+    res.json(swaggerSpec);
+});
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((req: Request, res: Response) => {
