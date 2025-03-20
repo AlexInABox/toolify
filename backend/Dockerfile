@@ -1,6 +1,8 @@
 # Stage 1: Build
 FROM node:18-alpine3.18 AS builder
 
+RUN apt install python3
+
 WORKDIR /app
 
 # Copy package files and install dependencies (including devDependencies for TypeScript)
