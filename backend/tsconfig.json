@@ -6,5 +6,10 @@
     "allowSyntheticDefaultImports": true,
     "outDir": "./dist"
   },
-  "files": ["./index.ts", "lib/Logging.ts"]
+  "files": [
+    "./index.ts",
+    "lib/Logging.ts",
+    "lib/swaggerConfig.ts",
+    "lib/swaggerDocs.ts"
+  ]
 }

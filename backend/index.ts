@@ -10,6 +10,8 @@ import { createCanvas, loadImage } from 'canvas';
 import GIFEncoder from 'gifencoder';
 import { fileTypeFromBuffer } from "file-type";
 import Logging from "./lib/Logging.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./lib/swaggerConfig.js";
 
 const app = express();
 var upload = multer({ dest: 'uploads/' });
@@ -219,6 +221,7 @@ app.post('/unzip', async (req: Request, res: Response) => {
     res.sendStatus(501);
 });
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((req: Request, res: Response) => {
     res.status(404).send('Theres nothing here.');
