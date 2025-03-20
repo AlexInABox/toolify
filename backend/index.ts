@@ -45,6 +45,7 @@ app.get('/currency', async (req: Request, res: Response) => {
         return;
     }
     res.status(200).send(converted.toString());
+    Logging.logInfo("[CURRENCY] Successfully served /currency");
 });
 
 interface QRCodeRequest {
@@ -66,6 +67,7 @@ app.get('/qrcode', async (req: Request, res: Response) => {
     QRCode.toDataURL(req.query.string)
         .then(url => {
             res.status(200).send(url.toString());
+            Logging.logInfo("[QRCODE] Successfully served /qrcode");
             return;
         })
         .catch(err => {
@@ -143,6 +145,7 @@ app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
             });
 
         await archive.finalize();
+        Logging.logInfo("[FAVICON] Successfully served /favicon");
         fs.unlink(req.file.path, () => { }); // Cleanup uploaded file
     } catch (err) {
         Logging.logCritical("[FAVICON] Failed miserably trying to generate the favicons: " + err.toString());
@@ -202,6 +205,7 @@ app.post('/gif', gifUploads, async (req: Request, res: Response) => {
     }
 
     encoder.finish();
+    Logging.logInfo("[GIF] Successfully served /gif");
 
     // Clean up the uploaded file
     res.on('finish', () => {
