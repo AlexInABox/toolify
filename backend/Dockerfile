@@ -1,8 +1,8 @@
 # Stage 1: Build
 FROM node:18-bullseye AS builder
 
-RUN apt update && apt install -y python3 build-essential
-RUN apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+RUN apt update && apt install -y python3 build-essential -y
+RUN apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev -y
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ RUN npx tsc
 FROM node:18-bullseye
 
 RUN apt update && apt install -y python3 build-essential
-RUN apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+RUN apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev -y
 
 WORKDIR /app
 
