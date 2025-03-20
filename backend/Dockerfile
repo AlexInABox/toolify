@@ -1,7 +1,8 @@
 # Stage 1: Build
 FROM node:18-bullseye AS builder
 
-RUN apt update && apt install -y python3 build-essential
+RUN sudo apt update && sudo apt install -y python3 build-essential
+RUN sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 
 WORKDIR /app
 
