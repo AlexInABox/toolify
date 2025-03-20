@@ -18,7 +18,7 @@ RUN npx tsc
 FROM node:18-alpine
 
 # Install only runtime dependencies for canvas
-RUN apk add --no-cache python3 cairo pango jpeg giflib librsvg
+RUN apk add --no-cache python3 cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev
 
 WORKDIR /app
 
