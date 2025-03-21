@@ -3,6 +3,7 @@ FROM node:18-alpine AS builder
 
 # Install dependencies for canvas
 RUN apk add --no-cache python3 build-base cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev autoconf automake
+RUN autoupdate
 
 WORKDIR /app
 
@@ -19,6 +20,7 @@ FROM node:18-alpine
 
 # Install only runtime dependencies for canvas
 RUN apk add --no-cache python3 build-base cairo-dev pango-dev jpeg-dev giflib-dev librsvg-dev autoconf automake
+RUN autoupdate
 
 WORKDIR /app
 
