@@ -1,4 +1,19 @@
 .contentBody{
-    max-width: 200px;
+    /*max-width: 200px;*/
+    width: fit-content;
+    margin-right: 20px;
     margin-top: 20px;
+}
+
+#currencySelector1{
+    width: fit-content;
+}
+#currencySelector2{
+    width: fit-content;
+}
+
+#inputs{
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
 }

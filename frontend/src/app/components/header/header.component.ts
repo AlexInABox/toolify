@@ -90,9 +90,6 @@ export class HeaderComponent implements OnInit {
     ];
 
     this.applyLogoInvert();
-
-    let response = await fetch("https://bcnd.toolify.m1productions.de/currency?from=USD&to=EUR&amount=15");
-    console.log(response);
   }
 
   toggleDarkMode() {
