@@ -3,3 +3,7 @@
     height: 30px;
     margin-right: 10px;
 }
+.menubar-button {
+    margin-right: 10px;
+    text-decoration: none;
+}

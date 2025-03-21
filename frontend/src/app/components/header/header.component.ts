@@ -17,7 +17,7 @@ export class HeaderComponent implements OnInit {
   constructor(private router: Router) { }
 
 
-  ngOnInit() {
+  async ngOnInit() {
     this.items = [
       {
         label: 'Home',
@@ -36,7 +36,7 @@ export class HeaderComponent implements OnInit {
           {
             label: 'Unit Conversion',
             icon: PrimeIcons.SORT_ALT,
-            route: '/unit'
+            route: '/youtube'
           },
           {
             label: 'Scientific',
@@ -60,9 +60,9 @@ export class HeaderComponent implements OnInit {
             route: '/qrcode'
           },
           {
-            label: 'Favicon',
+            label: 'GIF',
             icon: PrimeIcons.IMAGES,
-            route: '/favicon'
+            route: '/gif'
           },
         ]
       },
@@ -71,9 +71,9 @@ export class HeaderComponent implements OnInit {
         icon: PrimeIcons.ARROW_RIGHT_ARROW_LEFT,
         items: [
           {
-            label: 'File Converter',
-            icon: PrimeIcons.FILE_PLUS,
-            route: '/file'
+            label: 'Favicon',
+            icon: PrimeIcons.PLAY_CIRCLE,
+            route: '/favicon'
           },
           {
             label: 'Compression',

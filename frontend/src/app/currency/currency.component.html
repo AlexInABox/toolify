@@ -1,0 +1,27 @@
+<p-panel header="convert" class="contentBody">
+    <div id="inputs">
+        <p-inputgroup class="contentBody">
+            <p-select id="currencySelector1" [options]="currencies" [(ngModel)]="selectedCurrency1" placeholder="select" class="w-full md:w-56" />
+            <p-inputgroup-addon>
+                <p-button icon="pi pi-arrow-right-arrow-left" severity="secondary" (click)="swapSelections()" />
+            </p-inputgroup-addon>
+            <p-select id="currencySelector2" [options]="currencies" [(ngModel)]="selectedCurrency2" placeholder="select" class="w-full md:w-56" />
+        </p-inputgroup>
+        <p-inputgroup class="contentBody">
+            <p-inputnumber [(ngModel)]="ammount" placeholder="1" />
+            <p-inputgroup-addon>
+                <p-button icon="pi pi-sync" severity="secondary" (click)="fetchData()" />
+            </p-inputgroup-addon>
+        </p-inputgroup>
+    </div>
+    <p-table [value]="currencies" [tableStyle]="{ 'min-width': '50rem' }">
+        <ng-template #body let-product>
+            <tr>
+                <td>{{ product.code }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.quantity }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-panel>
