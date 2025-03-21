@@ -18,7 +18,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
+      - name: Run autoupdate
+        run: autoupdate
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
