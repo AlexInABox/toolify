@@ -219,8 +219,8 @@ app.post('/gif', gifUploads, async (req: Request, res: Response) => {
     });
 });
 
-const uploadFile = upload.single("file");
-app.post("/compress", uploadFile, async (req: Request, res: Response) => {
+const compressUpload = upload.single("file");
+app.post("/compress", compressUpload, async (req: Request, res: Response) => {
     if (!req.file) {
         return res.status(400).send("No file uploaded");
     }
@@ -262,9 +262,38 @@ app.post("/compress", uploadFile, async (req: Request, res: Response) => {
 });
 
 
+const zipUpload = upload.array("files");
+app.post("/zip", zipUpload, async (req: Request, res: Response) => {
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).send("No files uploaded");
+    }
 
-app.post('/zip', async (req: Request, res: Response) => {
-    res.sendStatus(501);
+    // Create a zip archive
+    const zipFileName = "compressed_files.zip";
+    const zipStream = archiver("zip", { zlib: { level: 9 } });
+
+    res.attachment(zipFileName);
+    zipStream.pipe(res);
+
+    // Add each uploaded file to the zip
+    req.files.forEach((file: express.Multer.File) => {
+        zipStream.append(fs.createReadStream(file.path), { name: file.originalname });
+    });
+
+    zipStream.finalize();
+
+    // Cleanup uploaded files after the response
+    zipStream.on("end", () => {
+        req.files.forEach((file: express.Multer.File) => {
+            fs.unlink(file.path, () => { });
+        });
+    });
+
+    // Handle errors
+    zipStream.on("error", (err) => {
+        fs.unlinkSync(zipFileName); // Optional cleanup if zip creation fails
+        res.status(500).send(`Error creating zip file: ${err.message}`);
+    });
 });
 
 app.post('/unzip', async (req: Request, res: Response) => {
