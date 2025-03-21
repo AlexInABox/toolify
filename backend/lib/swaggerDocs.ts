@@ -135,5 +135,34 @@
  *       500:
  *         description: Error during compression
  */
+/**
+ * @swagger
+ * /zip:
+ *   post:
+ *     summary: Upload multiple files to compress them into a ZIP archive
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               files:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       200:
+ *         description: Compressed zip file returned
+ *         content:
+ *           application/octet-stream:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: No files uploaded
+ *       500:
+ *         description: Error during zip creation
+ */
 
 export default {};
