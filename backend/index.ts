@@ -18,8 +18,11 @@ import imageminPngquant from "imagemin-pngquant";
 import imageminGifsicle from "imagemin-gifsicle";
 import imageminSvgo from "imagemin-svgo";
 import path from "path";
+import unzipper from "unzipper";
+import crypto from "crypto";
 
 const app = express();
+const publicDir = "public/"
 var upload = multer({ dest: 'uploads/' });
 
 
@@ -250,6 +253,29 @@ app.post("/compress", compressUpload, async (req: Request, res: Response) => {
 
         const compressedFilePath = compressedFiles[0].destinationPath;
 
+        // Set the correct Content-Type based on the file extension
+        let contentType = '';
+        switch (ext) {
+            case '.jpg':
+            case '.jpeg':
+                contentType = 'image/jpeg';
+                break;
+            case '.png':
+                contentType = 'image/png';
+                break;
+            case '.gif':
+                contentType = 'image/gif';
+                break;
+            case '.svg':
+                contentType = 'image/svg+xml';
+                break;
+            default:
+                contentType = 'application/octet-stream';
+                break;
+        }
+
+        res.setHeader('Content-Type', contentType);
+
         res.download(compressedFilePath, `compressed_${req.file.originalname}`, () => {
             fs.unlink(req.file.path, () => { });
             fs.unlink(compressedFilePath, () => { });
@@ -296,9 +322,78 @@ app.post("/zip", zipUpload, async (req: Request, res: Response) => {
     });
 });
 
-app.post('/unzip', async (req: Request, res: Response) => {
-    res.sendStatus(501);
+const unzipUpload = upload.single("file");
+app.post('/unzip', unzipUpload, async (req: Request, res: Response) => {
+    if (!req.file) {
+        return res.status(400).send("No file uploaded");
+    }
+
+    const zipFilePath = req.file.path;
+    const unzipStream = fs.createReadStream(zipFilePath).pipe(unzipper.Parse());
+
+    const urls: string[] = []; // To store the URLs of extracted files
+    const filesExtracted: Set<string> = new Set(); // To track files that are extracted
+
+    // Make sure the public directory exists
+    if (!fs.existsSync(publicDir)) {
+        fs.mkdirSync(publicDir);
+    }
+
+    unzipStream.on('entry', (entry) => {
+        const fileName = entry.path;
+        const fileType = entry.type; // 'File' or 'Directory'
+
+        if (fileType === 'File') {
+            // Generate a random hash for the filename
+            const randomHash = crypto.randomBytes(16).toString('hex');
+            const fileExt = path.extname(fileName); // Preserve original file extension
+            const newFileName = `${randomHash}${fileExt}`; // New random filename
+            const outputPath = path.join(publicDir, newFileName);
+
+            const outputStream = fs.createWriteStream(outputPath);
+            entry.pipe(outputStream);
+
+            outputStream.on('finish', () => {
+                const fileUrl = `/public/${newFileName}`; // URL for the file
+                urls.push(fileUrl);
+                filesExtracted.add(newFileName);
+
+                // Schedule deletion after 5 minutes (300,000 ms)
+                setTimeout(() => {
+                    fs.unlink(outputPath, (err) => {
+                        if (err) {
+                            console.error(`Failed to delete file: ${newFileName}`);
+                        } else {
+                            console.log(`Deleted file: ${newFileName}`);
+                        }
+                    });
+                }, 300000); // 5 minutes in milliseconds
+            });
+        } else {
+            entry.autodrain(); // Ignore directories
+        }
+    });
+
+    unzipStream.on('close', () => {
+        // Cleanup the uploaded zip file after extraction
+        fs.unlink(zipFilePath, () => { });
+
+        // Return the list of URLs
+        if (filesExtracted.size > 0) {
+            res.status(200).json({ files: urls });
+        } else {
+            res.status(400).send("No valid files extracted");
+        }
+    });
+
+    unzipStream.on('error', (err) => {
+        fs.unlink(zipFilePath, () => { });
+        res.status(500).send(`Error extracting zip file: ${err.message}`);
+    });
 });
+
+// Serve the public directory statically
+app.use('/public', express.static(publicDir));
 
 app.get('/api-docs.json', (req, res) => {
     res.json(swaggerSpec);

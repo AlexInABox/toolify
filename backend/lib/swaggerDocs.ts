@@ -164,5 +164,37 @@
  *       500:
  *         description: Error during zip creation
  */
+/**
+ * @swagger
+ * /unzip:
+ *   post:
+ *     summary: Upload a ZIP file to extract its contents
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: List of URLs to the extracted files
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 files:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     description: URL to the extracted file
+ *       400:
+ *         description: No file uploaded or no valid files extracted
+ *       500:
+ *         description: Error during ZIP extraction
+ */
 
 export default {};
