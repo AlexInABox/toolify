@@ -36,6 +36,24 @@
  */
 /**
  * @swagger
+ * /currencyList:
+ *   get:
+ *     summary: Get a list of all supported currency ISO codes
+ *     responses:
+ *       200:
+ *         description: List of currency ISO codes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ *                 description: ISO code of a supported currency (e.g., CAD, USD, EUR)
+ *       500:
+ *         description: Error retrieving currency list
+ */
+/**
+ * @swagger
  * /qrcode:
  *   get:
  *     summary: Generate a QR code

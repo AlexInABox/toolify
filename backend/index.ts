@@ -59,6 +59,14 @@ app.get('/currency', async (req: Request, res: Response) => {
     Logging.logInfo("[CURRENCY] Successfully served /currency");
 });
 
+app.get('/currencyList', async (req: Request, res: Response) => {
+    const convert = await Convert().from("USD").fetch();
+    const isoCodes = Object.keys(convert.rates);
+
+    res.status(200).send(isoCodes);
+    Logging.logInfo("[CURRENCY_LIST] Successfully served /currencyList");
+});
+
 interface QRCodeRequest {
     string: string
 }
