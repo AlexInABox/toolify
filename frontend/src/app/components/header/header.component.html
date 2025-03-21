@@ -1,5 +1,6 @@
 <p-menubar [model]="items">
     <ng-template #start>
+
         <img id="logo-png" src="/assets/logoToolifyLight.png" alt="Logo" />
     </ng-template>
     <ng-template #item let-item>
@@ -24,7 +25,12 @@
         </ng-template>
     </ng-template>
     <ng-template #end>
-        <p-button id="darkModeToggleButton" [icon]="isDarkMode ? 'pi pi-moon' : 'pi pi-sun'"
-            (onClick)="toggleDarkMode()"></p-button>
+        <div class="p-menubar-end">
+            <a href="https://github.com/AlexInABox/toolify" target="_blank" rel="noopener noreferrer" class="p-button menubar-button">
+                <i class="pi pi-github dark:text-surface-100"></i>
+            </a>
+            <p-button id="darkModeToggleButton" [icon]="isDarkMode ? 'pi pi-moon' : 'pi pi-sun'"
+                (onClick)="toggleDarkMode()"></p-button>
+        </div>
     </ng-template>
 </p-menubar>
