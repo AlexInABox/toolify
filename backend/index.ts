@@ -20,10 +20,12 @@ import imageminSvgo from "imagemin-svgo";
 import path from "path";
 import unzipper from "unzipper";
 import crypto from "crypto";
+import cors from "cors";
 
 const app = express();
 const publicDir = "public/"
 var upload = multer({ dest: 'uploads/' });
+app.use(cors());
 
 
 interface CurrencyRequest {

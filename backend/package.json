@@ -16,6 +16,7 @@
     "archiver": "^7.0.1",
     "canvas": "^3.1.0",
     "chalk": "^5.4.1",
+    "cors": "^2.8.5",
     "easy-currencies": "^1.8.3",
     "express": "^4.21.2",
     "file-type": "^20.4.1",
