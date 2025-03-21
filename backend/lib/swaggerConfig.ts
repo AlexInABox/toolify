@@ -13,7 +13,7 @@ const options = {
                 description: "Production server"
             },
             {
-                url: "http://localhost:3000", // For development
+                url: "http://127.0.0.1:3000", // For development
                 description: "Development server"
             },
         ]

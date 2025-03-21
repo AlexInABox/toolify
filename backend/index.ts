@@ -12,6 +12,12 @@ import { fileTypeFromBuffer } from "file-type";
 import Logging from "./lib/Logging.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./lib/swaggerConfig.js";
+import imagemin from 'imagemin';
+import imageminMozjpeg from "imagemin-mozjpeg";
+import imageminPngquant from "imagemin-pngquant";
+import imageminGifsicle from "imagemin-gifsicle";
+import imageminSvgo from "imagemin-svgo";
+import path from "path";
 
 const app = express();
 var upload = multer({ dest: 'uploads/' });
@@ -213,9 +219,49 @@ app.post('/gif', gifUploads, async (req: Request, res: Response) => {
     });
 });
 
-app.post('/compress', async (req: Request, res: Response) => {
-    res.sendStatus(501);
+const uploadFile = upload.single("file");
+app.post("/compress", uploadFile, async (req: Request, res: Response) => {
+    if (!req.file) {
+        return res.status(400).send("No file uploaded");
+    }
+
+    const supportedTypes = [".jpg", ".jpeg", ".png", ".gif", ".svg"];
+    const ext = path.extname(req.file.originalname).toLowerCase();
+
+    if (!supportedTypes.includes(ext)) {
+        fs.unlink(req.file.path, () => { });
+        return res.status(400).send("Unsupported file type");
+    }
+
+    try {
+        const compressedFiles = await imagemin([req.file.path], {
+            destination: req.file.destination,
+            plugins: [
+                imageminMozjpeg({ quality: 75 }),
+                imageminPngquant({ quality: [0.75, 0.9] }),
+                imageminGifsicle({ optimizationLevel: 2 }),
+                imageminSvgo()
+            ]
+        });
+
+        if (compressedFiles.length === 0) {
+            return res.status(500).send("Compression failed");
+        }
+
+        const compressedFilePath = compressedFiles[0].destinationPath;
+
+        res.download(compressedFilePath, `compressed_${req.file.originalname}`, () => {
+            fs.unlink(req.file.path, () => { });
+            fs.unlink(compressedFilePath, () => { });
+        });
+        Logging.logInfo("[COMPRESS] Successfully served /compress");
+    } catch (err) {
+        Logging.logError(`[COMPRESS] Error: ${err}`);
+        res.sendStatus(500);
+    }
 });
+
+
 
 app.post('/zip', async (req: Request, res: Response) => {
     res.sendStatus(501);

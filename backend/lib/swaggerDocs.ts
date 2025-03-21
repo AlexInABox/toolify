@@ -108,4 +108,32 @@
  *         description: Error generating GIF
  */
 
+/**
+ * @swagger
+ * /compress:
+ *   post:
+ *     summary: Upload a file to compress it
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Compressed file returned
+ *         content:
+ *           application/octet-stream:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: No file uploaded or unsupported file type
+ *       500:
+ *         description: Error during compression
+ */
+
 export default {};
