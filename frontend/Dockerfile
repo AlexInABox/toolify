@@ -17,5 +17,3 @@ FROM nginx:latest
 COPY --from=build app/dist/toolify/browser /usr/share/nginx/html
 
 EXPOSE 80
-
-CMD ["/docker-entrypoint.sh"]
