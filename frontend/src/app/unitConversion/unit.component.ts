@@ -19,30 +19,29 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   imports: [CommonModule, InputGroupModule, FormsModule, InputGroupAddonModule, SelectModule, PanelModule, TableModule, RouterModule, InputNumber, ButtonModule, ProgressSpinnerModule]
 })
 export class UnitComponent {
-  selectedUnit1: string = 'm';
-  selectedUnit2: string = 'mm';
-  ammount: number = 1;
-  category: string = 'length';
+  selectedUnit1!: any;
+  selectedUnit2!: any;
+  ammount!: number;
+  category!: string;
 
-  categories!: string[];
-  lengthUnits!: string[];
-  lengthConversionToMeters!: number[];
-  volumeUnits!: string[];
-  volumeConversionToLiters!: number[];
+  currentUnits!: Array<any>;
   tableData!: string[][];
 
+  categories!: string[];
+  lengthUnits!: Array<any>;
+  volumeUnits!: Array<any>;
+  
   constructor(private router: Router) {
     this.generateUnits();
-    this.calculate();
   }
 
   generateUnits(){
     this.categories = ['length', 'volume'];
-    this.lengthUnits = ['m', 'cm', 'mm'];
-    this.lengthConversionToMeters = [1, 100, 1000];
+    this.lengthUnits = [{name: 'm',value: 1}, {name: 'cm',value: 100}, {name: 'mm',value: 1000}, {name: 'in',value: 0.0254}];
+    this.volumeUnits = [{name: 'l',value: 1}, {name: 'dm2',value: 1}, {name: 'imp gal',value: 4.54609}];
+    this.currentUnits = this.lengthUnits;
 
-    this.volumeUnits = ['dm2', 'l'];
-    this.volumeConversionToLiters = [1, 1];
+    this.changeCategory();
   }
 
   swapSelections(){
@@ -55,7 +54,7 @@ export class UnitComponent {
     }
 
     this.tableData = [
-      [this.selectedUnit1, this.selectedUnit2],
+      [this.selectedUnit1.name, this.selectedUnit2.name],
       [this.ammount.toString(), (unit*this.ammount).toFixed(3).toString()],
     ]
 
@@ -68,13 +67,30 @@ export class UnitComponent {
     }
   }
 
-  async calculate(){
-    let response = await fetch("https://bcnd.toolify.m1productions.de/currency?from="+this.selectedUnit1+"&to="+this.selectedUnit2+"&amount=1");
-    if(!response.ok){
-      throw new Error('HTTP error! Status: ${response.status}');
+  changeCategory(){
+    switch(this.category){
+      case "length": this.currentUnits = this.lengthUnits; break;
+      case "volume": this.currentUnits = this.volumeUnits; break;
     }
 
-    let data = await response.json();
+    this.selectedUnit1 = this.currentUnits[0];
+    this.selectedUnit2 = this.currentUnits[1];
+
+    this.calculate();
+  }
+
+  calculate(){
+    console.log(this.selectedUnit1);
+    console.log(this.selectedUnit2);
+    let data = 1;
+    for(let i=0; i<this.currentUnits.length; i++){
+      if(this.currentUnits[i].name == this.selectedUnit1 || this.currentUnits[i].name == this.selectedUnit1.name){
+        data *= this.currentUnits[i].value;
+      }
+      else if(this.currentUnits[i].name == this.selectedUnit2 || this.currentUnits[i].name == this.selectedUnit2.name){
+        data /= this.currentUnits[i].value;
+      }
+    }
 
     this.fillTable(data);
   }

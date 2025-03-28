@@ -7,6 +7,6 @@ export const routes: Routes = [
   },
   {
     path: 'unit',
-    loadComponent: () => import('./unitConversion/unit.component').then((m) => m.CurrencyComponent)
+    loadComponent: () => import('./unitConversion/unit.component').then((m) => m.UnitComponent)
   }
 ];

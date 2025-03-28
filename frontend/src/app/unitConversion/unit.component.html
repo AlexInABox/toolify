@@ -1,19 +1,19 @@
-<p-panel header="convert" class="contentBody">
+<p-panel header="Unit Conversion " class="contentBody">
     <div id="inputs">
+        <p-select id="categorySelector" [options]="categories" [(ngModel)]="category" placeholder="select" class="w-full md:w-56" (onChange)="changeCategory()" />
         <p-inputgroup class="contentBody">
-            <p-select id="currencySelector1" [editable]="true" [options]="currencies" [(ngModel)]="selectedCurrency1" placeholder="select" class="w-full md:w-56" />
+            <p-select id="unitSelector1" [editable]="true" [options]="lengthUnits" optionLabel="name" [(ngModel)]="selectedUnit1" placeholder="select" class="w-full md:w-56" (onChange)="calculate()" />
             <p-inputgroup-addon>
                 <p-button icon="pi pi-arrow-right-arrow-left" severity="secondary" (click)="swapSelections()" />
             </p-inputgroup-addon>
-            <p-select id="currencySelector2" [editable]="true" [options]="currencies" [(ngModel)]="selectedCurrency2" placeholder="select" class="w-full md:w-56" />
+            <p-select id="unitSelector2" [editable]="true" [options]="lengthUnits" optionLabel="name" [(ngModel)]="selectedUnit2" placeholder="select" class="w-full md:w-56" (onChange)="calculate()" />
         </p-inputgroup>
         <p-inputgroup class="contentBody">
-            <p-inputnumber [(ngModel)]="ammount" placeholder="1" (keydown.enter)="fetchData()" />
+            <p-inputnumber [(ngModel)]="ammount" placeholder="1" (keydown.enter)="calculate()" />
             <p-inputgroup-addon>
-                <p-button icon="pi pi-sync" severity="secondary" (click)="fetchData()" />
+                <p-button icon="pi pi-sync" severity="secondary" (click)="calculate()" />
             </p-inputgroup-addon>
         </p-inputgroup>
-        <p-progressSpinner *ngIf="isLoading" />
     </div>
     <p-table [value]="tableData" [tableStyle]="{ 'min-width': '50rem' }">
         <ng-template #body let-line>
