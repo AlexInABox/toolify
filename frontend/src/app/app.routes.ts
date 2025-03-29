@@ -12,5 +12,9 @@ export const routes: Routes = [
   {
     path: 'favicon',
     loadComponent: () => import('./favicon/favicon.component').then((m) => m.FaviconComponent)
+  },
+  {
+    path: 'package',
+    loadComponent: () => import('./zip/zip.component').then((m) => m.ZipComponent)
   }
 ];
