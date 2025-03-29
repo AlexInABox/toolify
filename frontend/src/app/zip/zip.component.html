@@ -1,0 +1,74 @@
+<div class="card">
+  <p-toast></p-toast>
+
+  <!-- Zipping Section -->
+  <p-fileupload
+    [multiple]="true"
+    [customUpload]="true"
+    maxFileSize="10000000"
+    mode="advanced"
+    (uploadHandler)="zipFiles($event)"
+  >
+    <ng-template #empty> </ng-template>
+
+    <ng-template #content>
+      <div>
+        <h3>Zip Your Files</h3>
+        <p>
+          Upload multiple files, and we’ll bundle them into a ZIP file for you!
+        </p>
+        <p>
+          Drag and drop your files here, or click to select them. After
+          uploading, the files will be zipped and ready for download.
+        </p>
+        <div>
+          <i class="pi pi-file"></i>
+        </div>
+      </div>
+      <p>
+        Once uploaded, a ZIP file will automatically start downloading
+        containing all the uploaded files.
+      </p>
+    </ng-template>
+  </p-fileupload>
+
+  <!-- Unzipping Section -->
+  <div>
+    <h3>Unzip Your ZIP File</h3>
+    <p>
+      Upload a ZIP file here, and we’ll extract its contents. You will then get
+      a list of download links for each file inside the ZIP.
+    </p>
+    <p>
+      Upload a ZIP file below, and we’ll generate URLs where you can download
+      each individual file.
+    </p>
+
+    <p-fileupload
+      [multiple]="false"
+      [customUpload]="true"
+      accept=".zip"
+      maxFileSize="10000000"
+      mode="advanced"
+      (uploadHandler)="unzipFile($event)"
+    >
+      <ng-template #empty> </ng-template>
+
+      <ng-template #content>
+        <div>
+          <i class="pi pi-folder-open"></i>
+        </div>
+        <p>Click or drag your ZIP file here to upload it.</p>
+      </ng-template>
+    </p-fileupload>
+
+    <div *ngIf="unzippedFiles.length > 0">
+      <h4>Download Links for Your Files:</h4>
+      <ul>
+        <li *ngFor="let file of unzippedFiles">
+          <a [href]="file" download>{{ file }}</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
