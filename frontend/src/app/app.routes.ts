@@ -16,5 +16,9 @@ export const routes: Routes = [
   {
     path: 'package',
     loadComponent: () => import('./zip/zip.component').then((m) => m.ZipComponent)
+  },
+  {
+    path: 'qrcode',
+    loadComponent: () => import('./qrcode/qrcode.component').then((m) => m.QRCodeComponent)
   }
 ];

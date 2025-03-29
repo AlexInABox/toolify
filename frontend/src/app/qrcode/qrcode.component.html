@@ -1,0 +1,39 @@
+<p-toast></p-toast>
+
+<div class="card p-4">
+  <h3 class="text-lg font-semibold mb-2">Generate Your QR Code</h3>
+  <p class="text-sm text-gray-600 mb-4">
+    Enter a link or any text, and we'll generate a QR code for you.
+  </p>
+
+  <div class="flex flex-col gap-3">
+    <label for="qr-input" class="font-medium">Enter Text or Link</label><br />
+    <input
+      pInputText
+      id="qr-input"
+      aria-describedby="qr-input-help"
+      [(ngModel)]="qrInput"
+      class="p-inputtext w-full"
+      placeholder="Type here..."
+    /><button
+      pButton
+      icon="pi pi-qrcode"
+      label="Generate"
+      class="mt-2"
+      (click)="generateQRCode()"
+    ></button
+    ><br />
+    <small id="qr-input-help" class="text-gray-500">
+      This text will be converted into a QR code.
+    </small>
+  </div>
+
+  <div *ngIf="qrCodeUrl" class="mt-4 flex flex-col items-center">
+    <h4 class="text-lg font-semibold mb-2">Your QR Code:</h4>
+    <img
+      [src]="qrCodeUrl"
+      alt="Generated QR Code"
+      class="rounded shadow-lg border p-2"
+    />
+  </div>
+</div>
