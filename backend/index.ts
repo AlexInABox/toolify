@@ -27,7 +27,6 @@ const publicDir = "public/"
 var upload = multer({ dest: 'uploads/' });
 app.use(cors());
 
-
 interface CurrencyRequest {
     from: string,
     to: string,
@@ -46,25 +45,36 @@ function isCurrencyRequest(arg: any): arg is CurrencyRequest {
 app.get('/currency', async (req: Request, res: Response) => {
     if (!isCurrencyRequest(req.query)) {
         res.status(400).send("The query you sent does NOT match the expected query. Please try again!");
+        Logging.logWarning("[CURRENCY] Invalid query parameters");
         return;
     }
     const requestedPayload: CurrencyRequest = req.query;
 
-    const converted = await Convert(requestedPayload.amount).from(requestedPayload.from).to(requestedPayload.to);
-    if (Number.isNaN(converted)) {
-        res.sendStatus(500);
-        return;
+    try {
+        const converted = await Convert(requestedPayload.amount).from(requestedPayload.from).to(requestedPayload.to);
+        if (Number.isNaN(converted)) {
+            res.sendStatus(500);
+            Logging.logError("[CURRENCY] Conversion failed due to invalid result");
+            return;
+        }
+        res.status(200).send(converted.toString());
+        Logging.logInfo("[CURRENCY] Successfully served /currency");
+    } catch (err) {
+        res.status(500).send("An error occurred while converting the currency.");
+        Logging.logCritical("[CURRENCY] Conversion failed: " + err.toString());
     }
-    res.status(200).send(converted.toString());
-    Logging.logInfo("[CURRENCY] Successfully served /currency");
 });
 
 app.get('/currencyList', async (req: Request, res: Response) => {
-    const convert = await Convert().from("USD").fetch();
-    const isoCodes = Object.keys(convert.rates);
-
-    res.status(200).send(isoCodes);
-    Logging.logInfo("[CURRENCY_LIST] Successfully served /currencyList");
+    try {
+        const convert = await Convert().from("USD").fetch();
+        const isoCodes = Object.keys(convert.rates);
+        res.status(200).send(isoCodes);
+        Logging.logInfo("[CURRENCY_LIST] Successfully served /currencyList");
+    } catch (err) {
+        res.status(500).send("An error occurred while fetching currency list.");
+        Logging.logError("[CURRENCY_LIST] Error fetching currency list: " + err.toString());
+    }
 });
 
 interface QRCodeRequest {
@@ -81,33 +91,32 @@ function isQRCodeRequest(arg: any): arg is QRCodeRequest {
 app.get('/qrcode', async (req: Request, res: Response) => {
     if (!isQRCodeRequest(req.query)) {
         res.status(400).send("The query you sent does NOT match the expected query. Please try again!");
+        Logging.logWarning("[QRCODE] Invalid query parameters");
         return;
     }
-    QRCode.toDataURL(req.query.string)
-        .then(url => {
-            res.status(200).send(url.toString());
-            Logging.logInfo("[QRCODE] Successfully served /qrcode");
-            return;
-        })
-        .catch(err => {
-            res.status(500).send(err);
-            return;
-        })
+    try {
+        const url = await QRCode.toDataURL(req.query.string);
+        res.status(200).send(url.toString());
+        Logging.logInfo("[QRCODE] Successfully served /qrcode");
+    } catch (err) {
+        res.status(500).send(err);
+        Logging.logError("[QRCODE] Failed to generate QR code: " + err.toString());
+    }
 });
 
 const faviconUploads = upload.single('file');
 app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
     if (!req.file) {
-        return res.status(400).send('No file uploaded');
+        res.status(400).send('No file uploaded');
+        Logging.logWarning("[FAVICON] No file uploaded");
+        return;
     }
     const archive = archiver('zip');
-
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', 'attachment; filename="favicons.zip"');
 
     try {
         archive.pipe(res);
-
         await sharp(req.file.path)
             .resize(32, 32)
             .toFormat("png")
@@ -116,7 +125,7 @@ app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
                 archive.append(data, { name: `favicon.ico` });
             })
             .catch(err => {
-                Logging.logError("[FAVICON] Couldnt generate favicon.ico: " + err.toString());
+                Logging.logError("[FAVICON] Couldn't generate favicon.ico: " + err.toString());
             });
 
         await sharp(req.file.path)
@@ -165,18 +174,20 @@ app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
 
         await archive.finalize();
         Logging.logInfo("[FAVICON] Successfully served /favicon");
-        fs.unlink(req.file.path, () => { }); // Cleanup uploaded file
+        fs.unlink(req.file.path, () => { });
     } catch (err) {
-        Logging.logCritical("[FAVICON] Failed miserably trying to generate the favicons: " + err.toString());
+        Logging.logCritical("[FAVICON] Failed to generate favicons: " + err.toString());
     }
 });
 
 const gifUploads = upload.single('gif');
 app.post('/gif', gifUploads, async (req: Request, res: Response) => {
     if (!req.file) {
+        Logging.logError("[GIF] No file uploaded");
         return res.status(400).send('No file uploaded');
     }
     if (req.file.mimetype != 'application/zip') {
+        Logging.logError("[GIF] No valid ZIP file uploaded!");
         return res.status(400).send('No valid ZIP file uploaded!');
     }
 
@@ -195,6 +206,7 @@ app.post('/gif', gifUploads, async (req: Request, res: Response) => {
     }));
 
     if (images.length === 0) {
+        Logging.logError("[GIF] No PNG images found in ZIP!");
         return res.status(400).send('No PNG images found in ZIP!');
     }
 
@@ -229,12 +241,14 @@ app.post('/gif', gifUploads, async (req: Request, res: Response) => {
     // Clean up the uploaded file
     res.on('finish', () => {
         fs.unlinkSync(req.file.path);
+        Logging.logInfo("[GIF] Cleaned up uploaded file");
     });
 });
 
 const compressUpload = upload.single("file");
 app.post("/compress", compressUpload, async (req: Request, res: Response) => {
     if (!req.file) {
+        Logging.logError("[COMPRESS] No file uploaded");
         return res.status(400).send("No file uploaded");
     }
 
@@ -243,6 +257,7 @@ app.post("/compress", compressUpload, async (req: Request, res: Response) => {
 
     if (!supportedTypes.includes(ext)) {
         fs.unlink(req.file.path, () => { });
+        Logging.logError("[COMPRESS] Unsupported file type");
         return res.status(400).send("Unsupported file type");
     }
 
@@ -258,6 +273,7 @@ app.post("/compress", compressUpload, async (req: Request, res: Response) => {
         });
 
         if (compressedFiles.length === 0) {
+            Logging.logError("[COMPRESS] Compression failed");
             return res.status(500).send("Compression failed");
         }
 
@@ -289,7 +305,9 @@ app.post("/compress", compressUpload, async (req: Request, res: Response) => {
         res.download(compressedFilePath, `compressed_${req.file.originalname}`, () => {
             fs.unlink(req.file.path, () => { });
             fs.unlink(compressedFilePath, () => { });
+            Logging.logInfo("[COMPRESS] Cleaned up temporary files");
         });
+
         Logging.logInfo("[COMPRESS] Successfully served /compress");
     } catch (err) {
         Logging.logError(`[COMPRESS] Error: ${err}`);
@@ -297,10 +315,10 @@ app.post("/compress", compressUpload, async (req: Request, res: Response) => {
     }
 });
 
-
 const zipUpload = upload.array("files");
 app.post("/zip", zipUpload, async (req: Request, res: Response) => {
     if (!req.files || req.files.length === 0) {
+        Logging.logError("[ZIP] No files uploaded");
         return res.status(400).send("No files uploaded");
     }
 
@@ -323,11 +341,13 @@ app.post("/zip", zipUpload, async (req: Request, res: Response) => {
         req.files.forEach((file: express.Multer.File) => {
             fs.unlink(file.path, () => { });
         });
+        Logging.logInfo("[ZIP] Cleaned up uploaded files");
     });
 
     // Handle errors
     zipStream.on("error", (err) => {
         fs.unlinkSync(zipFileName); // Optional cleanup if zip creation fails
+        Logging.logError(`[ZIP] Error: ${err.message}`);
         res.status(500).send(`Error creating zip file: ${err.message}`);
     });
 });
@@ -335,6 +355,7 @@ app.post("/zip", zipUpload, async (req: Request, res: Response) => {
 const unzipUpload = upload.single("file");
 app.post('/unzip', unzipUpload, async (req: Request, res: Response) => {
     if (!req.file) {
+        Logging.logError("[UNZIP] No file uploaded");
         return res.status(400).send("No file uploaded");
     }
 
@@ -372,9 +393,9 @@ app.post('/unzip', unzipUpload, async (req: Request, res: Response) => {
                 setTimeout(() => {
                     fs.unlink(outputPath, (err) => {
                         if (err) {
-                            console.error(`Failed to delete file: ${newFileName}`);
+                            Logging.logError(`[UNZIP] Failed to delete file: ${newFileName}`);
                         } else {
-                            console.log(`Deleted file: ${newFileName}`);
+                            Logging.logInfo(`[UNZIP] Deleted file: ${newFileName}`);
                         }
                     });
                 }, 300000); // 5 minutes in milliseconds
@@ -390,17 +411,21 @@ app.post('/unzip', unzipUpload, async (req: Request, res: Response) => {
 
         // Return the list of URLs
         if (filesExtracted.size > 0) {
+            Logging.logInfo("[UNZIP] Successfully extracted files");
             res.status(200).json({ files: urls });
         } else {
+            Logging.logError("[UNZIP] No valid files extracted");
             res.status(400).send("No valid files extracted");
         }
     });
 
     unzipStream.on('error', (err) => {
         fs.unlink(zipFilePath, () => { });
+        Logging.logError(`[UNZIP] Error: ${err.message}`);
         res.status(500).send(`Error extracting zip file: ${err.message}`);
     });
 });
+
 
 // Serve the public directory statically
 app.use('/public', express.static(publicDir));
