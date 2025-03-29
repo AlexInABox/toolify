@@ -180,34 +180,31 @@ app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
     }
 });
 
-const gifUploads = upload.single('gif');
-app.post('/gif', gifUploads, async (req: Request, res: Response) => {
-    if (!req.file) {
-        Logging.logError("[GIF] No file uploaded");
-        return res.status(400).send('No file uploaded');
-    }
-    if (req.file.mimetype != 'application/zip') {
-        Logging.logError("[GIF] No valid ZIP file uploaded!");
-        return res.status(400).send('No valid ZIP file uploaded!');
+const gifUpload = upload.array('files');
+app.post('/gif', gifUpload, async (req: Request, res: Response) => {
+    if (!req.files || req.files.length === 0) {
+        Logging.logError("[GIF] No files uploaded");
+        return res.status(400).send('No files uploaded');
     }
 
-    const zip = new AdmZip(req.file.path);
-    var zipEntries = zip.getEntries();
     const images: Buffer[] = [];
     const allowedImageTypes = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'];
 
-    await Promise.all(zipEntries.map(async (zipEntry) => {
-        const buffer = zipEntry.getData();
+    // Check each uploaded file
+    await Promise.all(req.files.map(async (file: express.Multer.File) => {
+        const buffer = fs.readFileSync(file.path);
         const type = await fileTypeFromBuffer(buffer);
 
         if (type && allowedImageTypes.includes(type.ext)) {
             images.push(buffer);
+        } else {
+            Logging.logError(`[GIF] Invalid file type: ${file.originalname}`);
         }
     }));
 
     if (images.length === 0) {
-        Logging.logError("[GIF] No PNG images found in ZIP!");
-        return res.status(400).send('No PNG images found in ZIP!');
+        Logging.logError("[GIF] No valid images found in uploaded files!");
+        return res.status(400).send('No valid images found in uploaded files!');
     }
 
     const firstImage = await loadImage(images[0]);
@@ -238,12 +235,15 @@ app.post('/gif', gifUploads, async (req: Request, res: Response) => {
     encoder.finish();
     Logging.logInfo("[GIF] Successfully served /gif");
 
-    // Clean up the uploaded file
+    // Clean up the uploaded files
     res.on('finish', () => {
-        fs.unlinkSync(req.file.path);
-        Logging.logInfo("[GIF] Cleaned up uploaded file");
+        req.files.forEach((file: express.Multer.File) => {
+            fs.unlink(file.path, () => { });
+        });
+        Logging.logInfo("[GIF] Cleaned up uploaded files");
     });
 });
+
 
 const compressUpload = upload.single("file");
 app.post("/compress", compressUpload, async (req: Request, res: Response) => {

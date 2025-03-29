@@ -1,0 +1,41 @@
+<div class="card">
+  <p-toast></p-toast>
+
+  <p-fileupload
+    [multiple]="true"
+    [customUpload]="true"
+    accept="image/*"
+    maxFileSize="10000000"
+    mode="advanced"
+    (uploadHandler)="uploadFiles($event)"
+  >
+    <ng-template #empty>
+      <div>
+        Drag and drop your images here, or click to browse and select your
+        favorite photos.
+      </div>
+    </ng-template>
+
+    <ng-template #content>
+      <p>
+        Want to create something fun with your images? It's simple! Upload
+        multiple images (only images, please) and let us work our magic. Once
+        you've selected your images and clicked "Upload," they will be
+        automatically transformed into a vibrant GIF slideshow. Whether you're
+        making a mini movie of your vacation photos or showcasing your artwork,
+        the possibilities are endless!
+      </p>
+      <p>
+        Keep in mind, the images might not appear in the exact order you upload
+        them, but that's part of the fun! This feature is a playful proof of
+        concept, and we encourage you to give it a try. Who knows what creative
+        combination you might create with just a few clicks?
+      </p>
+      <ul *ngIf="uploadedFiles.length">
+        <li *ngFor="let file of uploadedFiles">
+          {{ file.name }} - {{ file.size }} bytes
+        </li>
+      </ul>
+    </ng-template>
+  </p-fileupload>
+</div>
