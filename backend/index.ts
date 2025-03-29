@@ -95,7 +95,7 @@ app.get('/qrcode', async (req: Request, res: Response) => {
         })
 });
 
-const faviconUploads = upload.single('favicon');
+const faviconUploads = upload.single('file');
 app.post('/favicon', faviconUploads, async (req: Request, res: Response) => {
     if (!req.file) {
         return res.status(400).send('No file uploaded');

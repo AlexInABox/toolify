@@ -1,0 +1,48 @@
+<div class="card">
+  <p-toast></p-toast>
+
+  <p-fileupload
+    [multiple]="false"
+    [customUpload]="true"
+    accept="image/*"
+    maxFileSize="10000000"
+    mode="advanced"
+    (uploadHandler)="uploadFiles($event)"
+  >
+    <ng-template #empty> </ng-template>
+
+    <ng-template #content>
+      <div>
+        <h3>Upload Your Image</h3>
+        <p>
+          This image will be converted into various sizes for favicons, perfect
+          for your website!
+        </p>
+        <p>
+          Drag and drop your image here, or click to select one. We'll take care
+          of the rest!
+        </p>
+        <div>
+          <i class="pi pi-image"></i>
+        </div>
+      </div>
+
+      <div>
+        <h4>Your Image will be Converted to These Favicon Sizes:</h4>
+        <ul>
+          <li><i class="pi pi-check-circle"></i>16x16</li>
+          <li><i class="pi pi-check-circle"></i>32x32</li>
+          <li><i class="pi pi-check-circle"></i>48x48</li>
+          <li><i class="pi pi-check-circle"></i>64x64</li>
+          <li><i class="pi pi-check-circle"></i>96x96</li>
+          <li><i class="pi pi-check-circle"></i>180x180</li>
+          <li><i class="pi pi-check-circle"></i>192x192</li>
+        </ul>
+        <p>
+          Once uploaded, a ZIP file will automatically start downloading with
+          all the favicons.
+        </p>
+      </div>
+    </ng-template>
+  </p-fileupload>
+</div>

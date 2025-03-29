@@ -8,5 +8,9 @@ export const routes: Routes = [
   {
     path: 'compress',
     loadComponent: () => import('./compress/compress.component').then((m) => m.CompressComponent)
+  },
+  {
+    path: 'favicon',
+    loadComponent: () => import('./favicon/favicon.component').then((m) => m.FaviconComponent)
   }
 ];
