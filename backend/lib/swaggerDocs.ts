@@ -84,7 +84,7 @@
  *           schema:
  *             type: object
  *             properties:
- *               favicon:
+ *               file:
  *                 type: string
  *                 format: binary
  *     responses:
