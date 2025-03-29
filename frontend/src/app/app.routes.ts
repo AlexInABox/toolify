@@ -20,5 +20,9 @@ export const routes: Routes = [
   {
     path: 'qrcode',
     loadComponent: () => import('./qrcode/qrcode.component').then((m) => m.QRCodeComponent)
+  },
+  {
+    path: 'gif',
+    loadComponent: () => import('./gif/gif.component').then((m) => m.GifComponent)
   }
 ];

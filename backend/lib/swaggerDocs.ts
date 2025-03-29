@@ -107,9 +107,11 @@
  *           schema:
  *             type: object
  *             properties:
- *               gif:
- *                 type: string
- *                 format: binary
+ *               files:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
  *     parameters:
  *       - in: query
  *         name: delay
