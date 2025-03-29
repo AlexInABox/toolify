@@ -6,6 +6,7 @@ import { definePreset } from '@primeng/themes';
 
 import Aura from '@primeng/themes/aura';
 import { routes } from './app.routes';
+import { provideHttpClient } from '@angular/common/http';
 
 const MyPreset = definePreset(Aura, {
   semantic: {
@@ -28,6 +29,7 @@ const MyPreset = definePreset(Aura, {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimationsAsync(),
+    provideHttpClient(),
     providePrimeNG({
       theme: {
         preset: MyPreset,
