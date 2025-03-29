@@ -1,0 +1,52 @@
+p-fileupload i.pi-image {
+  font-size: 3em;
+  color: #4caf50;
+}
+
+/* Empty State Message */
+p-fileupload ng-template#empty {
+  color: #333;
+}
+
+p-fileupload ng-template#empty h3 {
+  font-size: 1.5em;
+  color: #4caf50;
+  font-weight: 600;
+}
+
+p-fileupload ng-template#empty p {
+  font-size: 1.1em;
+  margin-bottom: 20px;
+}
+
+p-fileupload ng-template#empty div {
+  margin-top: 20px;
+}
+
+/* Content State (when file is uploaded) */
+p-fileupload ng-template#content {
+  text-align: center;
+}
+
+p-fileupload ng-template#content h4 {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #4caf50;
+}
+
+p-fileupload ng-template#content ul {
+  list-style: none;
+  padding-left: 0;
+  font-size: 1.1em;
+  margin-bottom: 20px;
+}
+
+p-fileupload ng-template#content li {
+  display: flex;
+  align-items: center;
+}
+
+p-fileupload ng-template#content li i {
+  color: #4caf50;
+  margin-right: 10px;
+}
